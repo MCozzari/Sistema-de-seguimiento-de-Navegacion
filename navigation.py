@@ -1,10 +1,11 @@
+from asyncio.base_futures import _FINISHED
 import sys
 import os
 import pickle
 from lib.algo1 import *
 
 class dayNode:
-    Head=None
+    head=None
     distanlist=None
 
 class distanNode:
@@ -32,17 +33,18 @@ def create(local_path):
 def crear_estructura(local_path):
     with open(local_path) as informe:
         lineas=informe.readlines()
+        cont=0
         for j in range(0,len(lineas[0])):
-            cont=0
-            if lineas[0][j]==0 or lineas[0][j]==1 or lineas[0][j]==2 or lineas[0][j]==3 or lineas[0][j]==4 or lineas[0][j]==5 or lineas[0][j]==6 or lineas[0][j]==7 or lineas[0][j]==8 or lineas[0][j]==9:
+            if lineas[0][j]=="0" or lineas[0][j]=="1" or lineas[0][j]=="2" or lineas[0][j]=="3" or lineas[0][j]=="4" or lineas[0][j]=="5" or lineas[0][j]=="6" or lineas[0][j]=="7" or lineas[0][j]=="8" or lineas[0][j]=="9" or lineas[0][j]=="/":
                 cont+=1
             else:
-                print(f"Error: Fecha no encontrada")
-                
-            if cont==3:
-                mes=lineas[0][j]*10+lineas[0][j+1]
-            elif cont==5:
-                year=lineas[0][j]*1000+lineas[0][j+1]*100+lineas[0][j+2]*10+lineas[0][j+3]
+                print(f"Error: Fecha no encontrada")  
+                quit()
+            if cont==4:
+                mes=lineas[0][j]+lineas[0][j+1]
+            elif cont==7:
+                year=lineas[0][j]+lineas[0][j+1]+lineas[0][j+2]+lineas[0][j+3]
+                break
         if mes=="02":
             if not year % 4 and (year % 100 or not year % 400):
                 size=29
@@ -53,33 +55,35 @@ def crear_estructura(local_path):
         else:
             size=30
         estructura=Array(size,dayNode())
-    for i in range(0,len(lineas)):
-        cont=0
-        nombre=lineas[i][0]
-        for j in range(0,len(lineas[i])):
-            verif=True
-            if lineas[i][j+1]!=" " and cont==0:
-                nombre=concat(nombre,lineas[i][j+1])
-            elif lineas[i][j+1]==" " and cont==0:
-                cont+=1
-                X=lineas[i][j+2]
-                verif=False
-            if lineas[i][j+1]!=" " and cont==1 and verif==True:
-                X=X*10+lineas[i][j+1]
-            elif lineas[i][j+1]==" " and cont==1 and verif==True:
-                cont+=1
-                Y=lineas[i][j+2]
-                verif=False
-            if lineas[i][j+1]!=" " and cont==2 and verif==True:
-                Y=Y*10+lineas[i][j+1]
-            elif lineas[i][j+1]==" " and cont==2 and verif==True:
-                cont+=1
-                direction=lineas[i][j+2]
-                verif=False
-            if lineas[i][j+1]!=" " and cont==3 and verif==True:
-                direction=concat(direction,lineas[i][j+1])
-        addhead(estructura,nombre,X,Y,direction)
-    print("")
+        for i in range(0, len(estructura)):
+            estructura[i]=dayNode()
+        for i in range(1,len(lineas)):
+            cont=0
+            nombre=lineas[i][0]
+            for j in range(0,len(lineas[i])-1):
+                verif=True
+                if lineas[i][j+1]!=" " and cont==0:
+                    nombre=nombre+lineas[i][j+1]
+                elif lineas[i][j+1]==" " and cont==0:
+                    cont+=1
+                    X=lineas[i][j+2]
+                    verif=False
+                if lineas[i][j+1]!=" " and cont==1 and verif==True:
+                    X=X+lineas[i][j+2]
+                elif lineas[i][j+1]==" " and cont==1 and verif==True:
+                    cont+=1
+                    Y=lineas[i][j+2]
+                    verif=False
+                if lineas[i][j+1]!=" " and cont==2 and verif==True:
+                    Y=Y+lineas[i][j+2]
+                elif lineas[i][j+1]==" " and cont==2 and verif==True:
+                    cont+=1
+                    direction=lineas[i][j+2]
+                    verif=False
+                if lineas[i][j]!=" " and cont==3 and verif==True:
+                    direction=direction + lineas[i][j+1]
+            addhead(estructura[00],nombre,X,Y,direction)
+        print("")
     
 
 
