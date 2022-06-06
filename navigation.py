@@ -83,7 +83,6 @@ def crear_estructura(local_path):
                 if lineas[i][j]!=" " and cont==3 and verif==True:
                     direction=direction + lineas[i][j+1]
             addhead(estructura[00],nombre,X,Y,direction)
-        print("")
     
 
 
