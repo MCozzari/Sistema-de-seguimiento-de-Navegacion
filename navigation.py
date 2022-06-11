@@ -3,6 +3,7 @@ import sys
 import os
 import pickle
 from lib.algo1 import *
+import time
 
 class dayNode:
     head=None
@@ -31,6 +32,7 @@ def create(local_path):
         print("Error: No se encontro el Path ingresado")
 
 def crear_estructura(local_path):
+    inicio=time.time()
     with open(local_path) as informe:
         lineas=informe.readlines()
         cont=0
@@ -60,29 +62,74 @@ def crear_estructura(local_path):
         for i in range(1,len(lineas)):
             cont=0
             nombre=lineas[i][0]
-            for j in range(0,len(lineas[i])-1):
+            X=0
+            Y=0
+            direction=""
+            for j in range(1,len(lineas[i])-1):
                 verif=True
-                if lineas[i][j+1]!=" " and cont==0:
-                    nombre=nombre+lineas[i][j+1]
-                elif lineas[i][j+1]==" " and cont==0:
+                if lineas[i][j]!=" " and cont==0:
+                    nombre=nombre+lineas[i][j]
+                elif lineas[i][j]==" ":
                     cont+=1
-                    X=lineas[i][j+2]
                     verif=False
-                if lineas[i][j+1]!=" " and cont==1 and verif==True:
-                    X=X+lineas[i][j+2]
-                elif lineas[i][j+1]==" " and cont==1 and verif==True:
-                    cont+=1
-                    Y=lineas[i][j+2]
-                    verif=False
-                if lineas[i][j+1]!=" " and cont==2 and verif==True:
-                    Y=Y+lineas[i][j+2]
-                elif lineas[i][j+1]==" " and cont==2 and verif==True:
-                    cont+=1
-                    direction=lineas[i][j+2]
-                    verif=False
-                if lineas[i][j]!=" " and cont==3 and verif==True:
-                    direction=direction + lineas[i][j+1]
-            addhead(estructura[00],nombre,X,Y,direction)
+                elif lineas[i][j]!=" " and cont==1 and verif==True:
+                    num=string_to_num(lineas[i][j])
+                    X=X*10+num
+                elif lineas[i][j]!=" " and cont==2 and verif==True:
+                    num=string_to_num(lineas[i][j])
+                    Y=Y*10+num
+                elif lineas[i][j]!=" " and cont==3 and verif==True:
+                    direction=direction + lineas[i][j]
+            addhead(estructura[0],nombre,X,Y,direction)
+            for k in range (1,size):
+                if direction=="N":
+                    Y=Y+1
+                elif direction=="S":
+                    Y=Y-1
+                elif direction=="E":
+                    X=X+1
+                elif direction=="O":
+                    X=X-1
+                elif direction=="NO":
+                    Y=Y+1
+                    X=X-1
+                elif direction=="NE":
+                    Y=Y+1
+                    X=X+1
+                elif direction=="SE":
+                    Y=Y-1
+                    X=X+1
+                elif direction=="SO":
+                    Y=Y-1
+                    X=X-1
+                addhead(estructura[k],nombre,X,Y,direction)
+    fin=time.time()
+    print(fin-inicio)
+
+        
+
+def string_to_num(num):
+    if num=="1":
+        X=1
+    elif num=="2":
+        X=2
+    elif num=="3":
+        X=3
+    elif num=="4":
+        X=4
+    elif num=="5":
+        X=5
+    elif num=="6":
+        X=6
+    elif num=="7":
+        X=7
+    elif num=="8":
+        X=8
+    elif num=="9":
+        X=9
+    elif num=="0":
+        X=0
+    return X
     
 
 
