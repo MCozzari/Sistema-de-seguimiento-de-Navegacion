@@ -4,6 +4,7 @@ import os
 import pickle
 from lib.algo1 import *
 import time
+import math
 
 class dayNode:
     head=None
@@ -20,6 +21,8 @@ class boatNode:
     X=None
     Y=None
     direction=None
+    vectorLength=Array(2,0) #indica la distancia a traves de un vector
+    vectorMod=Array(2,0) #es un vector que se suma al anterior para saber la distancia actual entre los dos barcos
     nextNode=None
 
 def create(local_path):
@@ -151,5 +154,118 @@ if len(sys.argv) == 3:
         create(sys.argv[2])
 
 
+#===========================================================
+def directionvector(direction):
+	
+	v1=Array(2,0)
+	
+	if direction=="N":
+		v1[1]=1
+        
+	elif direction=="S":
+		v1[1]=-1
 
+	elif direction=="E":
+		v1[0]=1
+
+	elif direction=="O":
+		v1[0]=-1
+
+	elif direction=="NO":
+		v1[1]=1
+		v1[0]=-1
+
+	elif direction=="NE":
+		v1[1]=1
+		v1[0]=1
+
+	elif direction=="SE":
+		v1[1]=-1
+		v1[0]=1
+
+	elif direction=="SO":
+		v1[1]=-1
+		v1[0]=-1
+
+	return v1
+
+#--------------------------------------------------------
+def firstDay(boats,distans):
+	
+	while boats.nextNode!=None:
+		otherBoats=boats.nextNode
+		while otherBoats!=None:
+
+			node=distanNode()
+			node.name=boats.name
+			node.nearboat=otherBoats.name
+			
+			node.vectorLength[0]=otherBoats.X-boats.X
+			node.vectorLength[1]=otherBoats.Y-boats.Y
+			
+			V1=directionvector(boats.direction)
+			V2=directionvector(otherBoats.direction)
+			
+			node.vectorMod[0]=V2[0]-V1[0]
+			node.vectorMod[1]=V2[1]-V1[1]
+
+            #se calcula la distancia entre los dos barcos
+			node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
+			
+			if distans==None:
+				distans=node
+			else:
+				node.nextNode=distans
+				distans=node
+
+			otherBoats=otherBoats.nextNode
+
+		boats=boats.nextNode
+
+	return distans
+
+#--------------------------------------------------------
+
+def otherDay(distans):
+	while distans!=None:
+		distans.vectorLength[0]=distans.vectorLength[0]+distans.vectorMod[0]
+		distans.vectorLength[1]=distans.vectorLength[1]+distans.vectorMod[1]
+		distans.distan=math.sqrt((distans.vectorLength[0]**2)+(distans.vectorLength[1]**2))
+		distans=distans.nextNode
+	
+	return distans
+
+#--------------------------------------------------------
+
+def distanDays(estructura):
+	for i in range(0,len(estructura)):
+		if i==0:
+			estructura[0].distanList=firstDay(estructura[0].head,estructura[0].distanList)
+			#ordenamiento(estructura[0].distanList)
+		else:
+			estructura[i].distanList=estructura[i-1].distanList
+			estructura[i]=otherDay(estructura[i].distanList)
+			#ordenamiento(estructura[i].distanList)
+    
+	return estructura
+
+#========================================================
+def search(date,name):
+	
+	navigation=None #local_path_navigation
+	n=date%len(navigation)
+	currentnode=navigation[n].head
+	
+	while currentnode!=None:
+		
+		if currentnode.name==name:
+			position=Array(2,0)
+			position[0]=currentnode.X
+			position[1]=currentnode.y
+			return position
+			
+		currentnode=currentnode.nextNode
+	return "No se encontró el barco"
+
+#========================================================
 
