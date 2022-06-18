@@ -12,10 +12,10 @@ class dayNode:
 
 class distanNode:
     name=None
-    nearbote=None
+    nearboat=None
     distan=None
-    vectorLength=Array(2,0) #indica la distancia a traves de un vector
-    vectorMod=Array(2,0) #es un vector que se suma al anterior para saber la distancia actual entre los dos barcos
+    vectorLength=None
+    vectorMod=None
     nextNode=None
 
 class boatNode:
@@ -91,9 +91,9 @@ def crear_estructura(local_path):
                     Y=Y-1
                 elif direction=="E":
                     X=X+1
-                elif direction=="O":
+                elif direction=="W":
                     X=X-1
-                elif direction=="NO":
+                elif direction=="NW":
                     Y=Y+1
                     X=X-1
                 elif direction=="NE":
@@ -102,7 +102,7 @@ def crear_estructura(local_path):
                 elif direction=="SE":
                     Y=Y-1
                     X=X+1
-                elif direction=="SO":
+                elif direction=="SW":
                     Y=Y-1
                     X=X-1
                 addhead(estructura[k],nombre,X,Y,direction)
@@ -162,17 +162,21 @@ def directionvector(direction):
 	
 	if direction=="N":
 		v1[1]=1
-        
+		v1[0]=0
+
 	elif direction=="S":
 		v1[1]=-1
+		v1[0]=0
 
 	elif direction=="E":
 		v1[0]=1
+		v1[1]=0
 
-	elif direction=="O":
+	elif direction=="W":
 		v1[0]=-1
+		v1[1]=0
 
-	elif direction=="NO":
+	elif direction=="NW":
 		v1[1]=1
 		v1[0]=-1
 
@@ -184,14 +188,15 @@ def directionvector(direction):
 		v1[1]=-1
 		v1[0]=1
 
-	elif direction=="SO":
+	elif direction=="SW":
 		v1[1]=-1
 		v1[0]=-1
 
 	return v1
 
 #--------------------------------------------------------
-def firstDay(boats,distans):
+def firstDay(estructura):
+	boats=estructura.head
 	
 	while boats.nextNode!=None:
 		otherBoats=boats.nextNode
@@ -201,51 +206,93 @@ def firstDay(boats,distans):
 			node.name=boats.name
 			node.nearboat=otherBoats.name
 			
+			node.vectorLength=Array(2,0)
+
 			node.vectorLength[0]=otherBoats.X-boats.X
 			node.vectorLength[1]=otherBoats.Y-boats.Y
-			
+
+
 			V1=directionvector(boats.direction)
 			V2=directionvector(otherBoats.direction)
-			
+
+			node.vectorMod=Array(2,0)
+
 			node.vectorMod[0]=V2[0]-V1[0]
 			node.vectorMod[1]=V2[1]-V1[1]
 
-            #se calcula la distancia entre los dos barcos
+      #se calcula la distancia entre los dos barcos
 			node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
 			
-			if distans==None:
-				distans=node
-			else:
-				node.nextNode=distans
-				distans=node
+				
+			node.nextNode=estructura.distanList
+			estructura.distanList=node
+				
 
 			otherBoats=otherBoats.nextNode
 
 		boats=boats.nextNode
 
-	return distans
-
+	return estructura
 #--------------------------------------------------------
 
-def otherDay(distans):
-	while distans!=None:
-		distans.vectorLength[0]=distans.vectorLength[0]+distans.vectorMod[0]
-		distans.vectorLength[1]=distans.vectorLength[1]+distans.vectorMod[1]
-		distans.distan=math.sqrt((distans.vectorLength[0]**2)+(distans.vectorLength[1]**2))
-		distans=distans.nextNode
+def otherDay(estructura, old):
+	node=distanNode()
 	
-	return distans
+	node.name=old.name
+	node.nearboat=old.nearboat
+	
+	node.vectorLength=Array(2,0)
+	node.vectorMod=Array(2,0)
+	
+	node.vectorMod[0]=old.vectorMod[0]
+	node.vectorMod[1]=old.vectorMod[1]
+	
+	node.vectorLength[0]=old.vectorLength[0]+node.vectorMod[0]
+	node.vectorLength[1]=old.vectorLength[1]+node.vectorMod[1]
+
+	node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
+
+	estructura.distanList=node
+	currentnode=estructura.distanList
+
+	old=old.nextNode
+
+	while old!=None:
+
+		node=distanNode()
+
+		node.name=old.name
+		node.nearboat=old.nearboat
+		
+		node.vectorLength=Array(2,0)
+		node.vectorMod=Array(2,0)
+
+		node.vectorMod[0]=old.vectorMod[0]
+		node.vectorMod[1]=old.vectorMod[1]
+
+		
+		node.vectorLength[0]=old.vectorLength[0]+node.vectorMod[0]
+		node.vectorLength[1]=old.vectorLength[1]+node.vectorMod[1]
+		
+		node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
+
+		currentnode.nextNode=node
+		currentnode=currentnode.nextNode
+        
+		old=old.nextNode
+	
+	return estructura.distanList
 
 #--------------------------------------------------------
 
 def distanDays(estructura):
 	for i in range(0,len(estructura)):
 		if i==0:
-			estructura[0].distanList=firstDay(estructura[0].head,estructura[0].distanList)
+			estructura[0]=firstDay(estructura[0])
 			#ordenamiento(estructura[0].distanList)
 		else:
-			estructura[i].distanList=estructura[i-1].distanList
-			estructura[i]=otherDay(estructura[i].distanList)
+			
+			estructura[i].distanList=otherDay(estructura[i],estructura[i-1].distanList)
 			#ordenamiento(estructura[i].distanList)
     
 	return estructura
