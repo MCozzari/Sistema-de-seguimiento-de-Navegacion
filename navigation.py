@@ -1,9 +1,8 @@
-from asyncio.base_futures import _FINISHED
 import sys
 import os
 import pickle
 from lib.algo1 import *
-import time
+from lib.sort import *
 import math
 
 class dayNode:
@@ -201,11 +200,11 @@ def distanDays(estructura):
 	for i in range(0,len(estructura)):
 		if i==0:
 			estructura[0]=firstDay(estructura[0])
-			#ordenamiento(estructura[0].distanList)
+			InsertionSort(estructura[0].distanList)
 		else:
 			
 			estructura[i].distanList=otherDay(estructura[i],estructura[i-1].distanList)
-			#ordenamiento(estructura[i].distanList)
+			InsertionSort(estructura[i].distanList)
     
 	return estructura
 
@@ -215,7 +214,7 @@ def crear_estructura(local_path):
     with open(local_path) as informe:
         lineas=informe.readlines()
         cont=0
-        for j in range(0,len(lineas[0])):
+        for j in range(0,len(lineas[0])): #Se recorre la primer linea del texto para ver la fecha
             if lineas[0][j]=="0" or lineas[0][j]=="1" or lineas[0][j]=="2" or lineas[0][j]=="3" or lineas[0][j]=="4" or lineas[0][j]=="5" or lineas[0][j]=="6" or lineas[0][j]=="7" or lineas[0][j]=="8" or lineas[0][j]=="9" or lineas[0][j]=="/":
                 cont+=1
             else:
@@ -235,7 +234,7 @@ def crear_estructura(local_path):
             size=31
         else:
             size=30
-        estructura=Array(size,dayNode())
+        estructura=Array(size,dayNode()) #Se crea una tabla hash, con un tamaño segun los dias
         for i in range(0, len(estructura)):
             estructura[i]=dayNode()
         for i in range(1,len(lineas)):
@@ -252,7 +251,7 @@ def crear_estructura(local_path):
                     cont+=1
                     verif=False
                 elif lineas[i][j]!=" " and cont==1 and verif==True:
-                    num=string_to_num(lineas[i][j])
+                    num=string_to_num(lineas[i][j]) #Se convierte los numeros de String a caracter
                     X=X*10+num
                 elif lineas[i][j]!=" " and cont==2 and verif==True:
                     num=string_to_num(lineas[i][j])
