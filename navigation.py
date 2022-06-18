@@ -8,12 +8,14 @@ import math
 
 class dayNode:
     head=None
-    distanlist=None
+    distanList=None
 
 class distanNode:
     name=None
     nearbote=None
     distan=None
+    vectorLength=Array(2,0) #indica la distancia a traves de un vector
+    vectorMod=Array(2,0) #es un vector que se suma al anterior para saber la distancia actual entre los dos barcos
     nextNode=None
 
 class boatNode:
@@ -21,8 +23,6 @@ class boatNode:
     X=None
     Y=None
     direction=None
-    vectorLength=Array(2,0) #indica la distancia a traves de un vector
-    vectorMod=Array(2,0) #es un vector que se suma al anterior para saber la distancia actual entre los dos barcos
     nextNode=None
 
 def create(local_path):
@@ -108,6 +108,7 @@ def crear_estructura(local_path):
                 addhead(estructura[k],nombre,X,Y,direction)
     fin=time.time()
     print(fin-inicio)
+    estructura=distanDays(estructura)
 
         
 
@@ -268,4 +269,3 @@ def search(date,name):
 	return "No se encontró el barco"
 
 #========================================================
-
