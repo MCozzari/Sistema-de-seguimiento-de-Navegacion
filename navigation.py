@@ -282,7 +282,7 @@ def crear_estructura(local_path):
                     X=X-1
                 addhead(estructura[k],nombre,X,Y,direction)
     estructura=distanDays(estructura)
-
+    return estructura
 #========================================================
 
 def create(local_path):
@@ -290,6 +290,7 @@ def create(local_path):
         sistema=crear_estructura(local_path)
         with open("informe.bin", "bw") as crear_informe:
             pickle.dump(sistema, crear_informe)
+            print("Sistema de Navegacion creado con exito")
     
     else:
         print("Error: No se encontro el Path ingresado")
@@ -315,13 +316,54 @@ def search(date,name):
 
 #========================================================
 
+def adddistan(lista,Node):
+    NodeA=distanNode()
+    NodeA.name=Node.name
+    NodeA.nearboat=Node.nearboat
+    NodeA.distan=Node.distan
+    if lista==None:
+        lista=NodeA
+        return lista
+    else:
+        NodeA.nextNode=lista
+        lista=NodeA
+        return lista
+
+def closer(date):
+    date=String(date)
+    n=0
+    for i in range (0,len(date)):
+        j=string_to_num(date[i])
+        n=n*10+j
+    Node=None
+    n-=1
+    with open('informe.bin','br') as leer_estructura:
+        estructura=pickle.load(leer_estructura)
+        Node=estructura[n].distanList
+        lista=None
+        while Node!=None:
+            if Node.distan<Node.nextNode.distan:
+                lista=adddistan(lista,Node)
+                break
+            elif Node.distan==Node.nextNode.distan:
+                lista=adddistan(lista,Node)
+            Node=Node.nextNode
+        while lista!=None:
+            print("Los Barcos, con menor distancia son: ", lista.name, " y ", lista.nearboat, " con una distancia de ", lista.distan)
+            lista=lista.nextNode
+        
+#========================================================
+            
+
 if len(sys.argv) == 3:
     if strcmp(String(sys.argv[1]), String('-create')):
         # Ejecutar '-create'
         create(sys.argv[2])
-    if strcmp(String(sys.argv[1]), String('-search')):
+    elif strcmp(String(sys.argv[1]), String('-search')):
         # Ejecutar '-search'
         search(sys.argv[2],sys.argv[3])
-
+    elif strcmp(String(sys.argv[1]), String('-closer')):
+        #Ejecutar '-closer'
+        closer(sys.argv[2])
 
 
