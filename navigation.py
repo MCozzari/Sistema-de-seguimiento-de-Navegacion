@@ -26,7 +26,39 @@ class boatNode:
     X=None
     Y=None
     direction=None
-    nextNode=None
+
+#========================================================
+
+
+def fecha(lineas):
+    cont=0
+    year=0
+    for j in range(0,len(lineas[0])-1): #Se recorre la primer linea del texto para ver la fecha
+        if lineas[0][j]=="0" or lineas[0][j]=="1" or lineas[0][j]=="2" or lineas[0][j]=="3" or lineas[0][j]=="4" or lineas[0][j]=="5" or lineas[0][j]=="6" or lineas[0][j]=="7" or lineas[0][j]=="8" or lineas[0][j]=="9" or lineas[0][j]=="/":
+            cont+=1
+        else:
+            print(f"Error: Fecha no encontrada")  
+            quit()
+        if cont==4:
+            month=lineas[0][j]+lineas[0][j+1]
+        elif cont>=7:
+            yearn=string_to_num(lineas[0][j])
+            year=year*10+yearn
+    return month,year
+
+#========================================================
+
+def dias(month,year):
+    if month=="02":
+        if not year % 4 and (year % 100 or not year % 400):
+            size=29
+        else:
+            size=28
+    elif month=="01" or month=="03" or month=="05" or month=="07" or month=="8" or month=="10" or month=="12":
+        size=31
+    else:
+        size=30
+    return size
 
 #========================================================
 
@@ -214,79 +246,65 @@ def distanDays(estructura):
     
 	return estructura
 
+
+def completar_estructura(lineas,estructura,size):
+
+    for i in range(1,len(lineas)):
+        cont=0
+        nombre=lineas[i][0]
+        X=0
+        Y=0
+        direction=""
+        for j in range(1,len(lineas[i])-1):
+            verif=True
+            if lineas[i][j]!=" " and cont==0:
+                nombre=nombre+lineas[i][j]
+            elif lineas[i][j]==" ":
+                cont+=1
+                verif=False
+            elif lineas[i][j]!=" " and cont==1 and verif==True:
+                num=string_to_num(lineas[i][j]) #Se convierte los numeros de String a caracter
+                X=X*10+num
+            elif lineas[i][j]!=" " and cont==2 and verif==True:
+                num=string_to_num(lineas[i][j])
+                Y=Y*10+num
+            elif lineas[i][j]!=" " and cont==3 and verif==True:
+                direction=direction + lineas[i][j]
+        addhead(estructura[0],nombre,X,Y,direction)
+        for k in range (1,size):
+            if direction=="N":
+                Y=Y+1
+            elif direction=="S":
+                Y=Y-1
+            elif direction=="E":
+                X=X+1
+            elif direction=="W":
+                X=X-1
+            elif direction=="NW":
+                Y=Y+1
+                X=X-1
+            elif direction=="NE":
+                Y=Y+1
+                X=X+1
+            elif direction=="SE":
+                Y=Y-1
+                X=X+1
+            elif direction=="SW":
+                Y=Y-1
+                X=X-1
+            addhead(estructura[k],nombre,X,Y,direction)
+    return estructura
 #========================================================
 
 def crear_estructura(local_path):
     with open(local_path) as informe:
         lineas=informe.readlines()
-        cont=0
-        for j in range(0,len(lineas[0])): #Se recorre la primer linea del texto para ver la fecha
-            if lineas[0][j]=="0" or lineas[0][j]=="1" or lineas[0][j]=="2" or lineas[0][j]=="3" or lineas[0][j]=="4" or lineas[0][j]=="5" or lineas[0][j]=="6" or lineas[0][j]=="7" or lineas[0][j]=="8" or lineas[0][j]=="9" or lineas[0][j]=="/":
-                cont+=1
-            else:
-                print(f"Error: Fecha no encontrada")  
-                quit()
-            if cont==4:
-                mes=lineas[0][j]+lineas[0][j+1]
-            elif cont==7:
-                year=lineas[0][j]+lineas[0][j+1]+lineas[0][j+2]+lineas[0][j+3]
-                break
-        if mes=="02":
-            if not year % 4 and (year % 100 or not year % 400):
-                size=29
-            else:
-                size=28
-        elif mes=="01" or mes=="03" or mes=="05" or mes=="07" or mes=="8" or mes=="10" or mes=="12":
-            size=31
-        else:
-            size=30
+        month,year=fecha(lineas)
+        size=dias(month,year)
         estructura=Array(size,dayNode()) #Se crea una tabla hash, con un tamaño segun los dias
         for i in range(0, len(estructura)):
             estructura[i]=dayNode()
-        for i in range(1,len(lineas)):
-            cont=0
-            nombre=lineas[i][0]
-            X=0
-            Y=0
-            direction=""
-            for j in range(1,len(lineas[i])-1):
-                verif=True
-                if lineas[i][j]!=" " and cont==0:
-                    nombre=nombre+lineas[i][j]
-                elif lineas[i][j]==" ":
-                    cont+=1
-                    verif=False
-                elif lineas[i][j]!=" " and cont==1 and verif==True:
-                    num=string_to_num(lineas[i][j]) #Se convierte los numeros de String a caracter
-                    X=X*10+num
-                elif lineas[i][j]!=" " and cont==2 and verif==True:
-                    num=string_to_num(lineas[i][j])
-                    Y=Y*10+num
-                elif lineas[i][j]!=" " and cont==3 and verif==True:
-                    direction=direction + lineas[i][j]
-            addhead(estructura[0],nombre,X,Y,direction)
-            for k in range (1,size):
-                if direction=="N":
-                    Y=Y+1
-                elif direction=="S":
-                    Y=Y-1
-                elif direction=="E":
-                    X=X+1
-                elif direction=="W":
-                    X=X-1
-                elif direction=="NW":
-                    Y=Y+1
-                    X=X-1
-                elif direction=="NE":
-                    Y=Y+1
-                    X=X+1
-                elif direction=="SE":
-                    Y=Y-1
-                    X=X+1
-                elif direction=="SW":
-                    Y=Y-1
-                    X=X-1
-                addhead(estructura[k],nombre,X,Y,direction)
+        estructura=completar_estructura(lineas,estructura,size)
     estructura=distanDays(estructura)
     return estructura
 #========================================================
