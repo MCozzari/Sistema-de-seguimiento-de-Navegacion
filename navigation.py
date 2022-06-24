@@ -255,6 +255,7 @@ def completar_estructura(lineas,estructura,size):
         X=0
         Y=0
         direction=""
+        verif2=False
         for j in range(1,len(lineas[i])-1):
             verif=True
             if lineas[i][j]!=" " and cont==0:
@@ -262,12 +263,20 @@ def completar_estructura(lineas,estructura,size):
             elif lineas[i][j]==" ":
                 cont+=1
                 verif=False
-            elif lineas[i][j]!=" " and cont==1 and verif==True:
+            elif lineas[i][j]=="-":
+                verif2=True
+            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==1 and verif==True and verif2==False:
                 num=string_to_num(lineas[i][j]) #Se convierte los numeros de String a caracter
                 X=X*10+num
-            elif lineas[i][j]!=" " and cont==2 and verif==True:
+            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==2 and verif==True and verif2==False:
                 num=string_to_num(lineas[i][j])
                 Y=Y*10+num
+            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==1 and verif==True and verif2==True:
+                num=string_to_num(lineas[i][j])
+                X=X*10-num
+            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==2 and verif==True and verif2==True:
+                num=string_to_num(lineas[i][j])
+                Y=Y*10-num                
             elif lineas[i][j]!=" " and cont==3 and verif==True:
                 direction=direction + lineas[i][j]
         addhead(estructura[0],nombre,X,Y,direction)
@@ -367,14 +376,14 @@ def closer(date):
         Node=estructura[n].distanList
         lista=None
         while Node!=None:
-            if Node.distan<Node.nextNode.distan:
+            if Node.value.distan<Node.nextNode.value.distan:
                 lista=adddistan(lista,Node)
                 break
-            elif Node.distan==Node.nextNode.distan:
+            elif Node.value.distan==Node.nextNode.value.distan:
                 lista=adddistan(lista,Node)
             Node=Node.nextNode
         while lista!=None:
-            print("Los Barcos, con menor distancia son: ", lista.name, " y ", lista.nearboat, " con una distancia de ", lista.distan)
+            print("Los Barcos, con menor distancia son: ", lista.value.name, " y ", lista.value.nearboat, " con una distancia de ", lista.value.distan)
             lista=lista.nextNode
         
 #========================================================
