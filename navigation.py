@@ -8,6 +8,7 @@ import math
 class dayNode:
     head=None
     distanList=None
+    
 
 class distanNode:
     name=None
@@ -15,6 +16,9 @@ class distanNode:
     distan=None
     vectorLength=None
     vectorMod=None
+
+class Linkedlist:
+    value:None
     nextNode=None
 
 class boatNode:
@@ -52,11 +56,12 @@ def string_to_num(num):
 #========================================================
 
 def addhead(estructura,nombre,X,Y,direction):
-    Node=boatNode()
-    Node.name=nombre
-    Node.X=X
-    Node.Y=Y
-    Node.direction=direction
+    Node=Linkedlist()
+    Node.value=boatNode()
+    Node.value.name=nombre
+    Node.value.X=X
+    Node.value.Y=Y
+    Node.value.direction=direction
     if estructura==None:
         estructura.head=Node
     else:
@@ -106,93 +111,94 @@ def directionvector(direction):
 #========================================================
 
 def firstDay(estructura):
-	boats=estructura.head
-	
-	while boats.nextNode!=None:
-		otherBoats=boats.nextNode
-		while otherBoats!=None:
-
-			node=distanNode()
-			node.name=boats.name
-			node.nearboat=otherBoats.name
-			
-			node.vectorLength=Array(2,0)
-
-			node.vectorLength[0]=otherBoats.X-boats.X
-			node.vectorLength[1]=otherBoats.Y-boats.Y
-
-
-			V1=directionvector(boats.direction)
-			V2=directionvector(otherBoats.direction)
-
-			node.vectorMod=Array(2,0)
-
-			node.vectorMod[0]=V2[0]-V1[0]
-			node.vectorMod[1]=V2[1]-V1[1]
+    
+    boats=estructura.head
+    while boats.nextNode!=None:
+        otherBoats=boats.nextNode
+        while otherBoats!=None:
+      
+            node=Linkedlist()
+            node.value=distanNode()
+            node.value.name=boats.value.name
+            node.value.nearboat=otherBoats.value.name
+            node.value.vectorLength=Array(2,0)
+            
+            node.value.vectorLength[0]=otherBoats.value.X-boats.value.X
+            node.value.vectorLength[1]=otherBoats.value.Y-boats.value.Y
+            
+            
+            V1=directionvector(boats.value.direction)
+            V2=directionvector(otherBoats.value.direction)
+            
+            node.value.vectorMod=Array(2,0)
+            
+            node.value.vectorMod[0]=V2[0]-V1[0]
+            node.value.vectorMod[1]=V2[1]-V1[1]
 
       #se calcula la distancia entre los dos barcos
-			node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
-			
-				
-			node.nextNode=estructura.distanList
-			estructura.distanList=node
-				
-
-			otherBoats=otherBoats.nextNode
-
-		boats=boats.nextNode
-
-	return estructura
+            
+            node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
+            
+            
+            node.nextNode=estructura.distanList
+            estructura.distanList=node
+            
+            otherBoats=otherBoats.nextNode
+            
+        boats=boats.nextNode
+        
+    return estructura
 
 #========================================================
 
 def otherDay(estructura, old):
-	node=distanNode()
+    node=Linkedlist()
+    node.value=distanNode()
+    
+    node.value.name=old.value.name
+    node.value.nearboat=old.value.nearboat
 	
-	node.name=old.name
-	node.nearboat=old.nearboat
+    node.value.vectorLength=Array(2,0)
+    node.value.vectorMod=Array(2,0)
 	
-	node.vectorLength=Array(2,0)
-	node.vectorMod=Array(2,0)
+    node.value.vectorMod[0]=old.value.vectorMod[0]
+    node.value.vectorMod[1]=old.value.vectorMod[1]
 	
-	node.vectorMod[0]=old.vectorMod[0]
-	node.vectorMod[1]=old.vectorMod[1]
-	
-	node.vectorLength[0]=old.vectorLength[0]+node.vectorMod[0]
-	node.vectorLength[1]=old.vectorLength[1]+node.vectorMod[1]
+    node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
+    node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
 
-	node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
+    node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
 
-	estructura.distanList=node
-	currentnode=estructura.distanList
+    estructura.distanList=node
+    currentnode=estructura.distanList
 
-	old=old.nextNode
-
-	while old!=None:
-
-		node=distanNode()
-
-		node.name=old.name
-		node.nearboat=old.nearboat
-		
-		node.vectorLength=Array(2,0)
-		node.vectorMod=Array(2,0)
-
-		node.vectorMod[0]=old.vectorMod[0]
-		node.vectorMod[1]=old.vectorMod[1]
-
-		
-		node.vectorLength[0]=old.vectorLength[0]+node.vectorMod[0]
-		node.vectorLength[1]=old.vectorLength[1]+node.vectorMod[1]
-		
-		node.distan=math.sqrt((node.vectorLength[0]**2)+(node.vectorLength[1]**2))
-
-		currentnode.nextNode=node
-		currentnode=currentnode.nextNode
+    old=old.nextNode
+ 
+    while old!=None:
         
-		old=old.nextNode
+        node=Linkedlist()
+        node.value=distanNode()
+        
+        node.value.name=old.value.name
+        node.value.nearboat=old.value.nearboat
+        
+        node.value.vectorLength=Array(2,0)
+        node.value.vectorMod=Array(2,0)
+        
+        node.value.vectorMod[0]=old.value.vectorMod[0]
+        node.value.vectorMod[1]=old.value.vectorMod[1]
+        
+        node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
+        node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
+        
+        node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
+        
+        currentnode.nextNode=node
+        currentnode=currentnode.nextNode
+        
+        old=old.nextNode
 	
-	return estructura.distanList
+    return estructura.distanList
 
 #========================================================
 
@@ -317,10 +323,11 @@ def search(date,name):
 #========================================================
 
 def adddistan(lista,Node):
-    NodeA=distanNode()
-    NodeA.name=Node.name
-    NodeA.nearboat=Node.nearboat
-    NodeA.distan=Node.distan
+    NodeA=Linkedlist()
+    NodeA.value=distanNode()
+    NodeA.value.name=Node.value.name
+    NodeA.value.nearboat=Node.value.nearboat
+    NodeA.value.distan=Node.value.distan
     if lista==None:
         lista=NodeA
         return lista
