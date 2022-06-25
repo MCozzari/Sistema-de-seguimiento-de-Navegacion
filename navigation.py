@@ -331,21 +331,22 @@ def create(local_path):
 #========================================================
 
 def search(date,name):
+	with open('informe.bin','br') as leer_estructura:
+		navigation=pickle.load(leer_estructura)
 	
-	navigation=None #local_path_navigation
-	n=date%len(navigation)
-	currentnode=navigation[n].head
-	
-	while currentnode!=None:
 		
-		if currentnode.name==name:
-			position=Array(2,0)
-			position[0]=currentnode.X
-			position[1]=currentnode.y
-			return position
-			
-		currentnode=currentnode.nextNode
-	return "No se encontró el barco"
+		currentnode=navigation[date-1].head
+        
+		while currentnode!=None:
+            
+			if currentnode.value.name==name:
+				position=Array(2,0)
+				position[0]=currentnode.value.X
+				position[1]=currentnode.value.Y
+				return print(position)
+                
+			currentnode=currentnode.nextNode
+		return print("No se encontró el barco")
 
 #========================================================
 
@@ -385,7 +386,43 @@ def closer(date):
         while lista!=None:
             print("Los Barcos, con menor distancia son: ", lista.value.name, " y ", lista.value.nearboat, " con una distancia de ", lista.value.distan)
             lista=lista.nextNode
-        
+
+#========================================================        
+def collision():
+	with open('informe.bin','br') as leer_estructura:
+		estructura=pickle.load(leer_estructura)
+		trueCollision=False
+		
+		for i in range(0,len(estructura)):
+			
+			currentnode=estructura[i].distanList
+			
+			if currentnode.value.distan<=1:
+				
+				trueCollision=True
+				print("el día",i+1,"los siguientes barcos estuvieron en riesgo de colición:")
+				
+				while currentnode!=None and currentnode.value.distan<=1:
+					print("-",currentnode.value.name," y ",currentnode.value.nearboat)
+					currentnode=currentnode.nextNode
+
+		if not trueCollision:
+			return print(False)
+
+		return
+#========================================================				
+def collision_ranking(date):
+	with open('informe.bin','br') as leer_estructura:
+		estructura=pickle.load(leer_estructura)
+
+		currentnode=estructura[date-1].distanList
+		i=0
+		while currentnode!=None and i<10:
+			i=i+1
+			print("Puesto",i,":",currentnode.value.name,"y",currentnode.value.nearboat,"con una distancia de", currentnode.value.distan)
+			currentnode=currentnode.nextNode
+
+
 #========================================================
             
 
