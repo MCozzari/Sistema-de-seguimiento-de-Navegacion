@@ -101,39 +101,47 @@ def addhead(estructura,nombre,X,Y,direction):
         estructura.head=Node
 
 #===========================================================
-
+#Esta función devuelve un array con la dirección del barco
 def directionvector(direction):
 	
 	v1=Array(2,0)
-	
+
+	#Cuando tiene dirección Norte
 	if direction=="N":
 		v1[1]=1
 		v1[0]=0
 
+    #Cuando tiene dirección Sur
 	elif direction=="S":
 		v1[1]=-1
 		v1[0]=0
 
+    #Cuando tiene dirección Este
 	elif direction=="E":
 		v1[0]=1
 		v1[1]=0
 
+    #Cuando tiene dirección Oeste
 	elif direction=="W":
 		v1[0]=-1
 		v1[1]=0
 
+    #Cuando tiene dirección Noroeste
 	elif direction=="NW":
 		v1[1]=1
 		v1[0]=-1
 
+    #Cuando tiene dirección Noreste
 	elif direction=="NE":
 		v1[1]=1
 		v1[0]=1
 
+    #Cuando tiene dirección Sureste
 	elif direction=="SE":
 		v1[1]=-1
 		v1[0]=1
 
+    #Cuando tiene dirección Suroeste
 	elif direction=="SW":
 		v1[1]=-1
 		v1[0]=-1
@@ -141,37 +149,47 @@ def directionvector(direction):
 	return v1
 
 #========================================================
-
+#Función que crea la lista de distancias del primer día
 def firstDay(estructura):
     
     boats=estructura.head
+
     while boats.nextNode!=None:
+
         otherBoats=boats.nextNode
+
         while otherBoats!=None:
-      
+            
+            #Se crean los nodos respectivos de la lista
             node=Linkedlist()
             node.value=distanNode()
+
+            #Se copian los nombres de los barcos involucrados
             node.value.name=boats.value.name
             node.value.nearboat=otherBoats.value.name
+
+            #Se crea el array que contendra el vector distancia
             node.value.vectorLength=Array(2,0)
             
+            #Se ingresan los valores del vector distancia restando la ubicación del primer barco con la ubicación del segundo
             node.value.vectorLength[0]=otherBoats.value.X-boats.value.X
             node.value.vectorLength[1]=otherBoats.value.Y-boats.value.Y
             
-            
+            #se saca los vectores direccion 
             V1=directionvector(boats.value.direction)
             V2=directionvector(otherBoats.value.direction)
             
+            #Se crea el array que contendra el vector modificador
             node.value.vectorMod=Array(2,0)
             
+            #Se ingresa los valores del vector modificador con la resta de las direcciones de ambos barcos
             node.value.vectorMod[0]=V2[0]-V1[0]
             node.value.vectorMod[1]=V2[1]-V1[1]
 
-      #se calcula la distancia entre los dos barcos
-            
+            #se calcula la distancia entre los dos barcos
             node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
             
-            
+            #Se agrega el nodo a la lista de distancias
             node.nextNode=estructura.distanList
             estructura.distanList=node
             
@@ -182,49 +200,65 @@ def firstDay(estructura):
     return estructura
 
 #========================================================
-
+#Función que calcula las distancias de los barcos los demas días del mes
 def otherDay(estructura, old):
+
+    #Se crean los nodos respectivos de la lista
     node=Linkedlist()
     node.value=distanNode()
-    
+
+    #Se copian los nombres de los barcos involucrados utilizando la lista anterior de distancias
     node.value.name=old.value.name
     node.value.nearboat=old.value.nearboat
 	
+    #Se crean los arrays necesarios
     node.value.vectorLength=Array(2,0)
     node.value.vectorMod=Array(2,0)
 	
+    #Se copian los valores del anterior vector modificador
     node.value.vectorMod[0]=old.value.vectorMod[0]
     node.value.vectorMod[1]=old.value.vectorMod[1]
 	
+    #Se ingresa los nuevos valores del vector distancia sumando el anterior vector distancia con el vector modificador
     node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
     node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
-
+    
+    #Se calcula la distancia entre los barcos con el vector distancia
     node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
 
+    #Se agraga el nodo al inicio de la lista de distancias
     estructura.distanList=node
     currentnode=estructura.distanList
 
     old=old.nextNode
- 
+
+    #En este bucle se crea lo mismo pero con la diferencia es que al final el nodo se agrega al final de la lista
     while old!=None:
-        
+
+        #Se crean los nodos respectivos de la lista
         node=Linkedlist()
         node.value=distanNode()
         
+        #Se copian los nombres de los barcos involucrados utilizando la lista anterior de distancias
         node.value.name=old.value.name
         node.value.nearboat=old.value.nearboat
         
+        #Se crean los arrays necesarios
         node.value.vectorLength=Array(2,0)
         node.value.vectorMod=Array(2,0)
         
+        #Se copian los valores del anterior vector modificador
         node.value.vectorMod[0]=old.value.vectorMod[0]
         node.value.vectorMod[1]=old.value.vectorMod[1]
         
+        #Se ingresa los nuevos valores del vector distancia sumando el anterior vector distancia con el vector modificador
         node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
         node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
         
+        #Se calcula la distancia entre los barcos con el vector distancia
         node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
         
+        #Se agraga el nodo al final de la lista de distancias
         currentnode.nextNode=node
         currentnode=currentnode.nextNode
         
@@ -233,17 +267,24 @@ def otherDay(estructura, old):
     return estructura.distanList
 
 #========================================================
-
+#Función que crea las listas de distancias de cada día del mes
 def distanDays(estructura):
+
+    #Se recorre por todos los días
 	for i in range(0,len(estructura)):
+
+        #Cuando es el primer día del mes
 		if i==0:
 			estructura[0]=firstDay(estructura[0])
 			InsertionSort(estructura[0].distanList)
+		
+        #Cuando es otro día
 		else:
 			
 			estructura[i].distanList=otherDay(estructura[i],estructura[i-1].distanList)
 			InsertionSort(estructura[i].distanList)
     
+    #Se devuelve la estructura con todas las listas de distancias completas y ordenadas
 	return estructura
 
 
@@ -329,23 +370,31 @@ def create(local_path):
         print("Error: No se encontro el Path ingresado")
 
 #========================================================
-
+#Función que busca la ubicación de un barco en especifico en tal día
 def search(date,name):
+
+    #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
 		navigation=pickle.load(leer_estructura)
 	
-		
+		#Se agarra la lista de barcos del día 
 		currentnode=navigation[date-1].head
         
+        #Se busca el barco
 		while currentnode!=None:
             
+            #Cuando se encuentra el barco
 			if currentnode.value.name==name:
-				position=Array(2,0)
+				position=Array(2,0) #Se crea un array que se guardaran la posición del barco
+
+                #Se carga la posición y se devuelve
 				position[0]=currentnode.value.X
 				position[1]=currentnode.value.Y
-				return print(position)
+				return print(position) 
                 
 			currentnode=currentnode.nextNode
+
+        #Esto es cuando no se encuentra el barco
 		return print("No se encontró el barco")
 
 #========================================================
@@ -387,38 +436,59 @@ def closer(date):
             print("Los Barcos, con menor distancia son: ", lista.value.name, " y ", lista.value.nearboat, " con una distancia de ", lista.value.distan)
             lista=lista.nextNode
 
-#========================================================        
+#========================================================
+#Función que devuelve los dias y los barcos que tuvieron en riesgo de colición        
 def collision():
+
+    #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
 		estructura=pickle.load(leer_estructura)
+		
+        #Esta variable es para saber si hubo riesgo de colición
 		trueCollision=False
 		
+        #Recorre por los días
 		for i in range(0,len(estructura)):
 			
 			currentnode=estructura[i].distanList
 			
+            #Al tener la lista ordenada de menor a mayor, entonces solo se verifica si el primer 
+            #nodo de la lista de distancia tuvo riesgo de colición
 			if currentnode.value.distan<=1:
 				
+                #Si tuvo entonces se cambia de la variable a True 
 				trueCollision=True
+
+                #Se indica que día se encontró el riesgo de colición
 				print("el día",i+1,"los siguientes barcos estuvieron en riesgo de colición:")
-				
+
+				#Y el siguente bucle muestra los riesgos de colición del día en forma de lista
 				while currentnode!=None and currentnode.value.distan<=1:
 					print("-",currentnode.value.name," y ",currentnode.value.nearboat)
 					currentnode=currentnode.nextNode
 
+        #Esto es cuando no se encontraron ningún riesgo de colición
 		if not trueCollision:
 			return print(False)
 
 		return
-#========================================================				
+#========================================================
+#Función que muestra el ranking de los 10 acercamientos	entre los barcos del día			
 def collision_ranking(date):
+
+    #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
 		estructura=pickle.load(leer_estructura)
 
+        #Se agarra la lista de distancias del día 
 		currentnode=estructura[date-1].distanList
 		i=0
+
+        #Bucle que recorrela lista de distancias hasta el decimo nodo o que se acabe la lista 
 		while currentnode!=None and i<10:
 			i=i+1
+            
+            #Se imprime la posición del ranking, los barcos involucrados y a que distancia estaban
 			print("Puesto",i,":",currentnode.value.name,"y",currentnode.value.nearboat,"con una distancia de", currentnode.value.distan)
 			currentnode=currentnode.nextNode
 
