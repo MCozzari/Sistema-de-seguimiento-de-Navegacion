@@ -416,6 +416,7 @@ def collision():
 	with open('informe.bin','br') as leer_estructura:
 		estructura=pickle.load(leer_estructura)
 		
+		estructura=distanDays(estructura)
         #Esta variable es para saber si hubo riesgo de colición
 		trueCollision=False
 		
@@ -440,10 +441,70 @@ def collision():
 					currentnode=currentnode.nextNode
 
         #Esto es cuando no se encontraron ningún riesgo de colición
+		
 		if not trueCollision:
 			return print(False)
 
 		return
+
+#========================================================
+#             la otra version del collision
+def other_collision():
+
+    #Se abre a donde se encuentra la estructura anteriormente creada
+	with open('informe.bin','br') as leer_estructura:
+		estructura=pickle.load(leer_estructura)
+		trueCollision=False
+		for i in range(0,len(estructura)):
+			if not trueCollision:
+				trueCollision=collisionDay(estructura[i],i+1)
+			else:
+				collisionDay(estructura[i],i+1)
+
+		if not trueCollision:
+			return print(False)
+
+
+def collisionDay(estructura,day):
+	boats=estructura.head
+	firstTime=False
+	while boats.nextNode!=None:
+
+			otherBoats=boats.nextNode
+
+			while otherBoats!=None:
+
+				#Se copian los nombres de los barcos involucrados
+				name=boats.value.name
+				nearboat=otherBoats.value.name
+
+				#Se crea el array que contendra el vector distancia
+				vectorLength=Array(2,0)
+				
+				#Se ingresan los valores del vector distancia restando la ubicación del primer barco con la ubicación del segundo
+				vectorLength[0]=otherBoats.value.X-boats.value.X
+				vectorLength[1]=otherBoats.value.Y-boats.value.Y
+				
+				#se calcula la distancia entre los dos barcos
+				distan=math.sqrt((vectorLength[0]**2)+(vectorLength[1]**2))
+
+				if distan<=1:
+					if not firstTime:
+						firstTime=True
+						print("")
+						print("el día",day,"los siguientes barcos estuvieron en riesgo de colición:")
+						
+					print("-",name," y ",nearboat, distan)
+				
+				
+				otherBoats=otherBoats.nextNode
+			
+			boats=boats.nextNode
+	if 	firstTime:	
+		return True
+	else:
+		return False
+
 #========================================================
 #Función que muestra el ranking de los 10 acercamientos	entre los barcos del día			
 def collision_ranking(date):
@@ -453,6 +514,11 @@ def collision_ranking(date):
 		estructura=pickle.load(leer_estructura)
 
         #Se agarra la lista de distancias del día 
+		estructura[date-1]=firstDay(estructura[date-1])
+		#mergesort(estructura[date-1])
+		
+		MergeSort(estructura[date-1].distanList)
+		
 		currentnode=estructura[date-1].distanList
 		i=0
 
@@ -463,6 +529,7 @@ def collision_ranking(date):
             #Se imprime la posición del ranking, los barcos involucrados y a que distancia estaban
 			print("Puesto",i,":",currentnode.value.name,"y",currentnode.value.nearboat,"con una distancia de", currentnode.value.distan)
 			currentnode=currentnode.nextNode
+
 
 
 #========================================================
