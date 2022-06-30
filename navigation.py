@@ -266,6 +266,7 @@ def distanDays(estructura):
     #Se devuelve la estructura con todas las listas de distancias completas y ordenadas
 	return estructura
 
+#========================================================
 
 def completar_estructura(lineas,estructura,size):
 
@@ -389,6 +390,8 @@ def closer(date):
     if n>=0:
         with open('informe.bin','br') as leer_estructura:
             estructura=pickle.load(leer_estructura)
+            estructura[n]=firstDay(estructura[n])
+            estructura[n].distanlist=MergeSort(estructura[n].distanlist)
             Node=estructura[n].distanList
             lista=None
             if n<len(estructura):
@@ -415,45 +418,6 @@ def collision():
     #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
 		estructura=pickle.load(leer_estructura)
-		
-		estructura=distanDays(estructura)
-        #Esta variable es para saber si hubo riesgo de colición
-		trueCollision=False
-		
-        #Recorre por los días
-		for i in range(0,len(estructura)):
-			
-			currentnode=estructura[i].distanList
-			
-            #Al tener la lista ordenada de menor a mayor, entonces solo se verifica si el primer 
-            #nodo de la lista de distancia tuvo riesgo de colición
-			if currentnode.value.distan<=1:
-				
-                #Si tuvo entonces se cambia de la variable a True 
-				trueCollision=True
-
-                #Se indica que día se encontró el riesgo de colición
-				print("el día",i+1,"los siguientes barcos estuvieron en riesgo de colición:")
-
-				#Y el siguente bucle muestra los riesgos de colición del día en forma de lista
-				while currentnode!=None and currentnode.value.distan<=1:
-					print("-",currentnode.value.name," y ",currentnode.value.nearboat)
-					currentnode=currentnode.nextNode
-
-        #Esto es cuando no se encontraron ningún riesgo de colición
-		
-		if not trueCollision:
-			return print(False)
-
-		return
-
-#========================================================
-#             la otra version del collision
-def other_collision():
-
-    #Se abre a donde se encuentra la estructura anteriormente creada
-	with open('informe.bin','br') as leer_estructura:
-		estructura=pickle.load(leer_estructura)
 		trueCollision=False
 		for i in range(0,len(estructura)):
 			if not trueCollision:
@@ -464,6 +428,7 @@ def other_collision():
 		if not trueCollision:
 			return print(False)
 
+#========================================================
 
 def collisionDay(estructura,day):
 	boats=estructura.head
@@ -508,18 +473,25 @@ def collisionDay(estructura,day):
 #========================================================
 #Función que muestra el ranking de los 10 acercamientos	entre los barcos del día			
 def collision_ranking(date):
+    
+	date=String(date)
+	n=0
+
+	for i in range (0,len(date)):
+		dia=string_to_num(date[i])
+		n=n*10+dia
 
     #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
 		estructura=pickle.load(leer_estructura)
 
         #Se agarra la lista de distancias del día 
-		estructura[date-1]=firstDay(estructura[date-1])
+		estructura[n-1]=firstDay(estructura[n-1])
 		#mergesort(estructura[date-1])
 		
-		MergeSort(estructura[date-1].distanList)
+		MergeSort(estructura[n-1].distanList)
 		
-		currentnode=estructura[date-1].distanList
+		currentnode=estructura[n-1].distanList
 		i=0
 
         #Bucle que recorrela lista de distancias hasta el decimo nodo o que se acabe la lista 
@@ -535,19 +507,19 @@ def collision_ranking(date):
 #========================================================
             
 
-if len(sys.argv) == 3:
-    if strcmp(String(sys.argv[1]), String('-create')):
-        # Ejecutar '-create'
-        create(sys.argv[2])
-    elif strcmp(String(sys.argv[1]), String('-search')):
-        # Ejecutar '-search'
-        search(sys.argv[2],sys.argv[3])
-    elif strcmp(String(sys.argv[1]), String('-closer')):
-        #Ejecutar '-closer'
-        closer(sys.argv[2])
-    elif strcmp(String(sys.argv[1]), String('-collision')):
-        #Ejecutar '-collision'
-        collision()
-    elif strcmp(String(sys.argv[1]), String('-collision_ranking')):
-        collision_ranking(sys.argv[2])
+
+if strcmp(String(sys.argv[1]), String('-create')):
+    # Ejecutar '-create'
+    create(sys.argv[2])
+elif strcmp(String(sys.argv[1]), String('-search')):
+    # Ejecutar '-search'
+    search(sys.argv[2],sys.argv[3])
+elif strcmp(String(sys.argv[1]), String('-closer')):
+    #Ejecutar '-closer'
+    closer(sys.argv[2])
+elif strcmp(String(sys.argv[1]), String('-collision')):
+    #Ejecutar '-collision'
+    collision()
+elif strcmp(String(sys.argv[1]), String('-collision_ranking')):
+    collision_ranking(sys.argv[2])
 
