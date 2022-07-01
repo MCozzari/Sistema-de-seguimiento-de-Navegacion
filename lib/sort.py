@@ -4,8 +4,6 @@ from math import *
 from random import *
 
 
-
-
 def MergeSortR(L1, L2):
 #Funcion wrapper
   resultado=Linkedlist()

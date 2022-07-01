@@ -10,13 +10,14 @@ import math
 
 
 def fecha(lineas):
+    #Funcion encargada de distinguir el dia, mes y año de la fecha
     cont=0
     year=0
     for j in range(0,len(lineas[0])-1): #Se recorre la primer linea del texto para ver la fecha
         if lineas[0][j]=="0" or lineas[0][j]=="1" or lineas[0][j]=="2" or lineas[0][j]=="3" or lineas[0][j]=="4" or lineas[0][j]=="5" or lineas[0][j]=="6" or lineas[0][j]=="7" or lineas[0][j]=="8" or lineas[0][j]=="9" or lineas[0][j]=="/":
             cont+=1
         else:
-            print(f"Error: Fecha no encontrada")  
+            print(f"Error: The date entered is incorrect")  
             quit()
         if cont==4:
             month=lineas[0][j]+lineas[0][j+1]
@@ -28,8 +29,9 @@ def fecha(lineas):
 #========================================================
 
 def dias(month,year):
+    #Funcion encargada de calcular la cantidad de dias en cada mes
     if month=="02":
-        if not year % 4 and (year % 100 or not year % 400):
+        if not year % 4 and (year % 100 or not year % 400): #Calculo que se realiza para saber si es año bisiesto o no
             size=29
         else:
             size=28
@@ -42,6 +44,8 @@ def dias(month,year):
 #========================================================
 
 def string_to_num(num):
+
+    #Funcion encargada de pasar de Caracter a Valor
     if num=="1":
         X=1
     elif num=="2":
@@ -64,20 +68,6 @@ def string_to_num(num):
         X=0
     return X
     
-#========================================================
-
-def addhead(estructura,nombre,X,Y,direction):
-    Node=Linkedlist()
-    Node.value=boatNode()
-    Node.value.name=nombre
-    Node.value.X=X
-    Node.value.Y=Y
-    Node.value.direction=direction
-    if estructura==None:
-        estructura.head=Node
-    else:
-        Node.nextNode=estructura.head
-        estructura.head=Node
 
 #===========================================================
 #Esta función devuelve un array con la dirección del barco
@@ -129,7 +119,7 @@ def directionvector(direction):
 
 #========================================================
 #Función que crea la lista de distancias del primer día
-def firstDay(estructura):
+def oneDay(estructura):
     
     boats=estructura.head
 
@@ -178,98 +168,9 @@ def firstDay(estructura):
         
     return estructura
 
-#========================================================
-#Función que calcula las distancias de los barcos los demas días del mes
-def otherDay(estructura, old):
-
-    #Se crean los nodos respectivos de la lista
-    node=Linkedlist()
-    node.value=distanNode()
-
-    #Se copian los nombres de los barcos involucrados utilizando la lista anterior de distancias
-    node.value.name=old.value.name
-    node.value.nearboat=old.value.nearboat
-	
-    #Se crean los arrays necesarios
-    node.value.vectorLength=Array(2,0)
-    node.value.vectorMod=Array(2,0)
-	
-    #Se copian los valores del anterior vector modificador
-    node.value.vectorMod[0]=old.value.vectorMod[0]
-    node.value.vectorMod[1]=old.value.vectorMod[1]
-	
-    #Se ingresa los nuevos valores del vector distancia sumando el anterior vector distancia con el vector modificador
-    node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
-    node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
-    
-    #Se calcula la distancia entre los barcos con el vector distancia
-    node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
-
-    #Se agraga el nodo al inicio de la lista de distancias
-    estructura.distanList=node
-    currentnode=estructura.distanList
-
-    old=old.nextNode
-
-    #En este bucle se crea lo mismo pero con la diferencia es que al final el nodo se agrega al final de la lista
-    while old!=None:
-
-        #Se crean los nodos respectivos de la lista
-        node=Linkedlist()
-        node.value=distanNode()
-        
-        #Se copian los nombres de los barcos involucrados utilizando la lista anterior de distancias
-        node.value.name=old.value.name
-        node.value.nearboat=old.value.nearboat
-        
-        #Se crean los arrays necesarios
-        node.value.vectorLength=Array(2,0)
-        node.value.vectorMod=Array(2,0)
-        
-        #Se copian los valores del anterior vector modificador
-        node.value.vectorMod[0]=old.value.vectorMod[0]
-        node.value.vectorMod[1]=old.value.vectorMod[1]
-        
-        #Se ingresa los nuevos valores del vector distancia sumando el anterior vector distancia con el vector modificador
-        node.value.vectorLength[0]=old.value.vectorLength[0]+node.value.vectorMod[0]
-        node.value.vectorLength[1]=old.value.vectorLength[1]+node.value.vectorMod[1]
-        
-        #Se calcula la distancia entre los barcos con el vector distancia
-        node.value.distan=math.sqrt((node.value.vectorLength[0]**2)+(node.value.vectorLength[1]**2))
-        
-        #Se agraga el nodo al final de la lista de distancias
-        currentnode.nextNode=node
-        currentnode=currentnode.nextNode
-        
-        old=old.nextNode
-	
-    return estructura.distanList
-
-#========================================================
-#Función que crea las listas de distancias de cada día del mes
-def distanDays(estructura):
-
-    #Se recorre por todos los días
-	for i in range(0,len(estructura)):
-
-        #Cuando es el primer día del mes
-		if i==0:
-			estructura[0]=firstDay(estructura[0])
-			estructura[0].distanList=MergeSort(estructura[0].distanList)
-		
-        #Cuando es otro día
-		else:
-			
-			estructura[i].distanList=otherDay(estructura[i],estructura[i-1].distanList)
-			estructura[i].distanList=MergeSort(estructura[i].distanList)
-    
-    #Se devuelve la estructura con todas las listas de distancias completas y ordenadas
-	return estructura
-
-#========================================================
 
 def completar_estructura(lineas,estructura,size):
-
+    #Funcion encargada de Completar la lista head de la Estructura para todos los dias
     for i in range(1,len(lineas)):
         cont=0
         nombre=lineas[i][0]
@@ -279,29 +180,29 @@ def completar_estructura(lineas,estructura,size):
         for j in range(1,len(lineas[i])-1):
             verif=True
             if lineas[i][j]!=" " and cont==0:
-                nombre=nombre+lineas[i][j]
-            elif lineas[i][j]==" ":
-                cont+=1
+                nombre=nombre+lineas[i][j] #Se busca el nombre del barco
+            elif lineas[i][j]==" ": #Se distingue entre nombre, x, y, direccion por los espacios
+                cont+=1 
                 verif=False
-                verif2=False
+                verif2=False 
             elif lineas[i][j]=="-":
                 verif2=True
             elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==1 and verif==True and verif2==False:
                 num=string_to_num(lineas[i][j]) #Se convierte los numeros de String a caracter
-                X=X*10+num
-            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==2 and verif==True and verif2==False:
-                num=string_to_num(lineas[i][j])
-                Y=Y*10+num
+                X=X*10+num #Se busca la posicion en X
             elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==1 and verif==True and verif2==True:
                 num=string_to_num(lineas[i][j])
                 X=X*10-num
+            elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==2 and verif==True and verif2==False:
+                num=string_to_num(lineas[i][j])
+                Y=Y*10+num #Se busca la posicion en Y
             elif lineas[i][j]!=" " and lineas[i][j]!="-" and cont==2 and verif==True and verif2==True:
                 num=string_to_num(lineas[i][j])
                 Y=Y*10-num                
             elif lineas[i][j]!=" " and cont==3 and verif==True:
-                direction=direction + lineas[i][j]
+                direction=direction + lineas[i][j] #Se busca la direccion en la que se dirije el barco
         addhead(estructura[0],nombre,X,Y,direction)
-        for k in range (1,size):
+        for k in range (1,size): #Se modifican X e Y dependiendo su direccion
             if direction=="N":
                 Y=Y+1
             elif direction=="S":
@@ -335,7 +236,6 @@ def crear_estructura(local_path):
         for i in range(0, len(estructura)):
             estructura[i]=dayNode()
         estructura=completar_estructura(lineas,estructura,size)
-    estructura=distanDays(estructura)
     return estructura
 #========================================================
 
@@ -344,10 +244,10 @@ def create(local_path):
         sistema=crear_estructura(local_path)
         with open("informe.bin", "bw") as crear_informe:
             pickle.dump(sistema, crear_informe)
-            print("Sistema de Navegacion creado con exito")
+            print("navy created successfully")
     
     else:
-        print("Error: No se encontro el Path ingresado")
+        print("Error: The path entered was not found")
 
 #========================================================
 #Función que busca la ubicación de un barco en especifico en tal día
@@ -375,14 +275,14 @@ def search(date,name):
 			currentnode=currentnode.nextNode
 
         #Esto es cuando no se encuentra el barco
-		return print("No se encontró el barco")
+		return print("Boat not found")
 
 #========================================================
 
 def closer(date):
     date=String(date)
     n=0
-    for i in range (0,len(date)):
+    for i in range (0,len(date)): #Se convierte el dia ingresado a Valor
         dia=string_to_num(date[i])
         n=n*10+dia
     Node=None
@@ -390,14 +290,14 @@ def closer(date):
     if n>=0:
         with open('informe.bin','br') as leer_estructura:
             estructura=pickle.load(leer_estructura)
-            estructura[n]=firstDay(estructura[n])
-            estructura[n].distanlist=MergeSort(estructura[n].distanlist)
-            Node=estructura[n].distanList
-            lista=None
             if n<len(estructura):
+                estructura[n]=oneDay(estructura[n]) #Se crea la lista distanList de la Estructura para el dia deseado
+                estructura[n].distanList=MergeSort(estructura[n].distanList) #Se ordena la lista
+                Node=estructura[n].distanList
+                lista=None
                 lista=Linkedlist()
                 while Node!=None:
-                    if Node.value.distan<Node.nextNode.value.distan:
+                    if Node.value.distan<Node.nextNode.value.distan: #Se busca verifica si el valor encontrado es el unico o ultimo con esa distancia
                         lista=add(lista,Node.value)
                         break
                     elif Node.value.distan==Node.nextNode.value.distan:
@@ -407,9 +307,9 @@ def closer(date):
                     print("Los Barcos, con menor distancia son: ", lista.value.name, " y ", lista.value.nearboat, " con una distancia de ", lista.value.distan)
                     lista=lista.nextNode
             else:
-                print("La fecha ingresada es incorrecta")
+                print("The date entered is incorrect")
     else:
-        print("La fecha ingresada es incorrecta")
+        print("The date entered is incorrect")
 
 #========================================================
 #Función que devuelve los dias y los barcos que tuvieron en riesgo de colición        
@@ -459,7 +359,7 @@ def collisionDay(estructura,day):
 						print("")
 						print("el día",day,"los siguientes barcos estuvieron en riesgo de colición:")
 						
-					print("-",name," y ",nearboat, distan)
+					print("-",name," y ",nearboat, distan, ", " ,end="")
 				
 				
 				otherBoats=otherBoats.nextNode
@@ -474,34 +374,39 @@ def collisionDay(estructura,day):
 #Función que muestra el ranking de los 10 acercamientos	entre los barcos del día			
 def collision_ranking(date):
     
-	date=String(date)
-	n=0
+    date=String(date)
+    n=0
 
-	for i in range (0,len(date)):
-		dia=string_to_num(date[i])
-		n=n*10+dia
+    for i in range (0,len(date)):
+        dia=string_to_num(date[i])
+        n=n*10+dia
 
-    #Se abre a donde se encuentra la estructura anteriormente creada
-	with open('informe.bin','br') as leer_estructura:
-		estructura=pickle.load(leer_estructura)
+    n-=1
+    if n>=0:
+        #Se abre a donde se encuentra la estructura anteriormente creada
+        with open('informe.bin','br') as leer_estructura:
+            estructura=pickle.load(leer_estructura)
+            if n<len(estructura):
+                #Se agarra la lista de distancias del día 
+                estructura[n]=oneDay(estructura[n])
+                #mergesort(estructura[date-1])
 
-        #Se agarra la lista de distancias del día 
-		estructura[n-1]=firstDay(estructura[n-1])
-		#mergesort(estructura[date-1])
-		
-		MergeSort(estructura[n-1].distanList)
-		
-		currentnode=estructura[n-1].distanList
-		i=0
+                estructura[n].distanList=MergeSort(estructura[n].distanList)
 
-        #Bucle que recorrela lista de distancias hasta el decimo nodo o que se acabe la lista 
-		while currentnode!=None and i<10:
-			i=i+1
-            
-            #Se imprime la posición del ranking, los barcos involucrados y a que distancia estaban
-			print("Puesto",i,":",currentnode.value.name,"y",currentnode.value.nearboat,"con una distancia de", currentnode.value.distan)
-			currentnode=currentnode.nextNode
+                currentnode=estructura[n].distanList
+                i=0
 
+                #Bucle que recorrela lista de distancias hasta el decimo nodo o que se acabe la lista 
+                while currentnode!=None and i<10:
+                    i=i+1
+
+                    #Se imprime la posición del ranking, los barcos involucrados y a que distancia estaban
+                    print("Puesto",i,":",currentnode.value.name,"y",currentnode.value.nearboat,"con una distancia de", currentnode.value.distan)
+                    currentnode=currentnode.nextNode
+            else:
+                print("The date entered is incorrect")
+    else:
+        print("The date entered is incorrect")
 
 
 #========================================================
@@ -517,9 +422,11 @@ elif strcmp(String(sys.argv[1]), String('-search')):
 elif strcmp(String(sys.argv[1]), String('-closer')):
     #Ejecutar '-closer'
     closer(sys.argv[2])
+elif sys.argv[1] =='-collision_ranking':
+    #Ejecutar '-collision_ranking'
+    collision_ranking(sys.argv[2])
 elif strcmp(String(sys.argv[1]), String('-collision')):
     #Ejecutar '-collision'
     collision()
-elif strcmp(String(sys.argv[1]), String('-collision_ranking')):
-    collision_ranking(sys.argv[2])
+
 
