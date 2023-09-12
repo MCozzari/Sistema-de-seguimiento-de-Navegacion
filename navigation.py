@@ -252,6 +252,11 @@ def create(local_path):
 #========================================================
 #Función que busca la ubicación de un barco en especifico en tal día
 def search(date,name):
+	date=String(date)
+	n=0
+	for i in range (0,len(date)): #Se convierte el dia ingresado a Valor
+		dia=string_to_num(date[i])
+		n=n*10+dia
 
     #Se abre a donde se encuentra la estructura anteriormente creada
 	with open('informe.bin','br') as leer_estructura:
